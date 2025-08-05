@@ -22,22 +22,29 @@ const ExerciseDetail = () => {
       const youtubeSearchUrl = 'https://youtube-search-and-download.p.rapidapi.com';
 
       const exerciseDetailData = await fetchData(`${exerciseDbUrl}/exercises/exercise/${id}`, exerciseOptions);
+      if (!exerciseDetailData || !exerciseDetailData.name) {
+        setExerciseDetail({});
+        setExerciseVideos([]);
+        setTargetMuscleExercises([]);
+        setEquipmentExercises([]);
+        return;
+      }
       setExerciseDetail(exerciseDetailData);
 
       const exerciseVideosData = await fetchData(`${youtubeSearchUrl}/search?query=${exerciseDetailData.name} exercise`, youtubeOptions);
-      setExerciseVideos(exerciseVideosData.contents);
+      setExerciseVideos(exerciseVideosData && exerciseVideosData.contents ? exerciseVideosData.contents : []);
 
       const targetMuscleExercisesData = await fetchData(`${exerciseDbUrl}/exercises/target/${exerciseDetailData.target}`, exerciseOptions);
-      setTargetMuscleExercises(targetMuscleExercisesData);
+      setTargetMuscleExercises(Array.isArray(targetMuscleExercisesData) ? targetMuscleExercisesData : []);
 
-      const equimentExercisesData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`, exerciseOptions);
-      setEquipmentExercises(equimentExercisesData);
+      const equipmentExercisesData = await fetchData(`${exerciseDbUrl}/exercises/equipment/${exerciseDetailData.equipment}`, exerciseOptions);
+      setEquipmentExercises(Array.isArray(equipmentExercisesData) ? equipmentExercisesData : []);
     };
 
     fetchExercisesData();
   }, [id]);
 
-  if (!exerciseDetail) return <div>No Data</div>;
+  if (!exerciseDetail || !exerciseDetail.name) return <div>No Data</div>;
 
   return (
     <Box sx={{ mt: { lg: '96px', xs: '60px' } }}>

@@ -30,7 +30,9 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
   // Pagination
   const indexOfLastExercise = currentPage * exercisesPerPage;
   const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
-  const currentExercises = exercises.slice(indexOfFirstExercise, indexOfLastExercise);
+  const currentExercises = Array.isArray(exercises)
+    ? exercises.slice(indexOfFirstExercise, indexOfLastExercise)
+    : [];
 
   const paginate = (event, value) => {
     setCurrentPage(value);
@@ -38,7 +40,7 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
     window.scrollTo({ top: 1800, behavior: 'smooth' });
   };
 
-  if (currentExercises.length == 0) return <Loader />;
+  if (!Array.isArray(currentExercises) || currentExercises.length === 0) return <Loader />;
 
   return (
     <Box id="exercises" sx={{ mt: { lg: '109px' } }} mt="50px" p="20px">
